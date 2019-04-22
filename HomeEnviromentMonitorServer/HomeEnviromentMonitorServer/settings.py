@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ["192.168.0.100", "192.168.0.1", "127.0.0.1", "192.168.0.101"]
 # Application definition
 
 INSTALLED_APPS = [
+    'datalogger.apps.DataloggerConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
