@@ -1,22 +1,31 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<title>FC-python wrapper</title>
-	{% load static %} 
-   <script type="text/javascript" src="{% static "fusioncharts/fusioncharts.js" %}"></script>
-   <script type="text/javascript" src="{% static "fusioncharts/fusioncharts.charts.js" %}"></script>
-   <script type="text/javascript" src="{% static "fusioncharts/themes/fusioncharts.theme.fint.js" %}"></script>
+  <head>
+    <title>Django Wrapper | FusionCharts</title>
+    {% load static %}
+    <script
+      type="text/javascript"
+      src="{% static 'fusioncharts/fusioncharts.js' %}"
+    ></script>
+    <script
+      type="text/javascript"
+      src="{% static 'fusioncharts/themes/fusioncharts.theme.carbon.js' %}"
+    ></script>
+	
+	<style>
 
-   <style>
-@import url('https://fonts.googleapis.com/css?family=Lato');
-</style>
-</head>
-<body>
-AAAAAAAAAAAAAAA
+    "chart": {
+        "borderColor": "#666666",
+        "borderThickness": "40",
+        "borderAlpha": "80"
+    }
 
-
-	<div id="chart-1">{{ output|safe }}</div>
-</body>
+	</style>
+  </head>
+  <body>
+    <!-- FusionCharts will render here-->
+    <center><div id="chart-1"></div></center>
+    <!-- dumping JavaScript code here -->
+    {{ output|safe }}
+  </body>
 </html>
-
-
