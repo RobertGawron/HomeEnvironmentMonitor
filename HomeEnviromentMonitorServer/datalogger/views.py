@@ -12,7 +12,7 @@ def index(request):
             "xAxisName": " ",
             "yAxisName": " ",
             "numberPrefix": " ",
-            "theme": "zune"
+            "theme": "ocean"
         }
 
     dataSource['categories'] = [
@@ -55,10 +55,6 @@ def index(request):
         sample_value = {}
         sample_value['value'] = str(int(key.sample_value))
         dataSource['dataset'][1]['data'].append(sample_value)
-        
 
-    
     chartObj = FusionCharts( 'msline', 'ex1', '1200', '600', 'chart-1', 'json',dataSource )
-    
-    print(chartObj.render())
     return render(request, 'index.html', {'output': chartObj.render()}) 
