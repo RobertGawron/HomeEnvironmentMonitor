@@ -44,4 +44,4 @@ while(True):
     
     conn.commit()
     
-    time.sleep(60)
+    time.sleep(30*60)
