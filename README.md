@@ -1,5 +1,7 @@
 # HomeEnvironmentMonitor
 
+[![Static Code Analysis](https://github.com/RobertGawron/HomeEnvironmentMonitor/workflows/Static%20Code%20Analysis/badge.svg)](https://github.com/RobertGawron/HomeEnvironmentMonitor/actions?query=workflow%3A%22Static+Code+Analysis%22)
+
 ## Summary
 
 This is a RaspberryPi based web sever for storage and visualization of data from various sensors that I made:
