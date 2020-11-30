@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from django.http import JsonResponse
+import json
 
 from .models import Measurement
 
@@ -15,3 +17,8 @@ def index(request):
 
     context = {'measurements': measurements}
     return render(request, 'GeigerCounter/index.html', context)
+
+
+def getMeasurements(request):
+    measurements = Measurement.objects.order_by('date').values()
+    return JsonResponse(list(measurements), safe=False)

@@ -6,8 +6,10 @@
     <link href="{% static 'Server/nv.d3.css' %}" rel="stylesheet">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js" charset="utf-8"></script>
-    <script src="{% static 'Server/nv.d3.js' %}"/>
+    <script src="{% static 'Server/nv.d3.js' %}"></script>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+     
     <style>
         text {
             font: 12px sans-serif;
@@ -23,53 +25,34 @@
         }
     </style>
 </head>
-<body class='with-3d-shadow with-transitions'>
-<button onclick="expandLegend();">Expand/Contract Legend</button>
-    <script>
-        var expandLegend = function() {
-            var exp = chart.legend.expanded();
-            chart.legend.expanded(!exp);
-            chart.update();
-        }
-    </script>
+<body >
+   
+   
 <svg id="chart1" style="height: 900px;"></svg>
 
 <script>
 
     var histcatexplong = [
         {
-            "key" : "Gamma Spectrometer" ,
+            "key" : "Geiger Counter" ,
             "values" : [ 
-            {% for measurement in measurements %}
-                [{{ measurement.date }} , {{ measurement.value }}],
-            {% endfor %}
+     
             ]
         } ,
-        {
-            "key" : "Ionization Chamber" ,
-            "values" : [ 
-            {% for measurement in measurements %}
-                [{{ measurement.date }} , {{ measurement.value }}],
-            {% endfor %}
-            ]
-        } ,
-        {
-            "key" : "Semiconductor Radioactivity Detector" ,
-            "values" : [ 
-            {% for measurement in measurements %}
-                [{{ measurement.date }} , {{ measurement.value }}],
-            {% endfor %}
-            ]
-        } ,
-        {
-            "key" : "Geiger-Muller Counter" ,
-            "values" : [ 
-            {% for measurement in measurements %}
-                [{{ measurement.date }} , {{ measurement.value }}],
-            {% endfor %}
-            ]
-        } ,       
+     
     ];
+
+
+    $.getJSON( "/GeigerCounter/data", function( data ) {
+        var items = [];
+        var i=0
+        $.each( data, function( key, val ) {
+            histcatexplong[0].values.push([i,val.value])
+            i++// dummy way, I don't know how to parse date for now
+        });
+    });
+
+
 
     var colors = d3.scale.category20();
 
