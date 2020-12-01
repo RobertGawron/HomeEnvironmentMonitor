@@ -1,7 +1,8 @@
 {
     "dependencies": {
-        "jquery": "3.5.1",
+        "bootstrap": "^4.5.3",
         "d3": "^3.4.4",
+        "jquery": "3.5.1",
         "nvd3": "^1.8.3"
     }
 }
