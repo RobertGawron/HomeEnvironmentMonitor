@@ -3,12 +3,16 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <link href="{% static 'Server/nv.d3.css' %}" rel="stylesheet">
+    <link href="{% static 'Server/node_modules/nvd3/build/nv.d3.css' %}" rel="stylesheet">
+        
+    <script src="{% static 'Server/node_modules/d3/d3.js' %}"></script>
+    <script src="{% static 'Server/node_modules/nvd3/build/nv.d3.js' %}"></script>
+    
+    <script src="{% static 'Server/node_modules/jquery/dist/jquery.js' %}"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js" charset="utf-8"></script>
-    <script src="{% static 'Server/nv.d3.js' %}"></script>
+   <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> --> 
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    
      
     <style>
         text {
@@ -27,15 +31,15 @@
 </head>
 <body >
    
-   
+    <svg id='heatMap'></svg> 
 <svg id="chart1" style="height: 900px;"></svg>
-
+xxx
 <script>
 
     var histcatexplong = [
         {
             "key" : "Geiger Counter" ,
-            "values" : [ 
+            "values" : [ [1,1],[2,2]
      
             ]
         } ,
@@ -49,6 +53,7 @@
         $.each( data, function( key, val ) {
             histcatexplong[0].values.push([i,val.value])
             i++// dummy way, I don't know how to parse date for now
+            alert(val.value)
         });
     });
 
@@ -88,6 +93,101 @@
     });
 
 
+
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////
+
+/*
+
+var chart = nv.models.heatMapChart();
+    var highContrast = true;
+    var showGrid = false;
+    var showAxes = true;
+	var defaultChart = {
+        x: function(d) { return d.hour },
+        y: function(d) { return d.day },
+        cellValue: function(d) { return d.value },
+        cellAspectRatio: false,
+        normalize: false,
+        colorRange: ["#a50026","#d73027","#f46d43","#fdae61","#fee090","#ffffbf","#e0f3f8","#abd9e9","#74add1","#4575b4","#313695"],
+        highContrastText: highContrast,
+        showXAxis: true,
+        showYAxis: true,
+        showLegend: true,
+        showGrid: showGrid,
+        showCellValues: true,
+        alignXAxis: 'top',
+        alignYAxis: 'left',
+        cellValueFormat: function(d) { return typeof d === 'number' ? d.toFixed(0) : d },
+        cellBorderWidth: 4,
+        cellRadius: 0,
+        missingDataColor: '#bcbcbc',
+        missingDataLabel: '',
+        xMeta: false,
+        yMeta: false,
+        metaOffset: 5,
+        margin: {top: 50, right: 50}
+	}
+
+
+	// setup default chart
+	nv.addGraph(function() {
+
+		setChartOptions(defaultChart);
+
+		d3.select('svg#heatMap')
+			.datum(datah)
+			.call(chart);
+
+		nv.utils.windowResize(chart.update);
+
+		return chart;
+	})
+
+	// update chart with new settings
+	function updatePlot(update) {
+		setChartOptions(update);
+		chart.update();
+	}
+
+	// set chart settings
+	function setChartOptions(update) {
+
+		Object.keys(update).forEach(function(optName, i) {
+			var optVal = Object.values(update)[i];
+            console.log('Setting the option ' + optName + ' to ' + optVal);
+			chart[optName](optVal)
+		});
+
+	}
+
+
+	var datah = [
+        {day: 'Tu', hour: 1, value: 6, group: 13, category: 1, level: 'F'},
+        {day: 'Tu', hour: 2, value: 2, group: 13, category: 1, level: 'J'},
+        {day: 'Tu', hour: 3, value: 0, group: 13, category: 1, level: 'F'},
+        {day: 'Tu', hour: 15, value: 60, group: 13, category: 2, level: 'A'},
+        {day: 'Tu', hour: 1, value: 50, group: 13, category: 2, level: 'C'},
+        {day: 'Tu', hour: 16, value: 50, group: 13, category: 2, level: 'C'},
+    ];
+    
+    $.getJSON( "/GeigerCounter/data", function( data ) {
+        var items = [];
+        var i=0
+        $.each( data, function( key, val ) {
+            datah[i%5].value = val.value
+            i++// dummy way, I don't know how to parse date for now
+        });
+    });
+
+    alert(1)*/
 </script>
 </body>
 </html>
