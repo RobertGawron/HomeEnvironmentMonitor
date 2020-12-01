@@ -3,73 +3,131 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <link href="{% static 'Server/nv.d3.css' %}" rel="stylesheet">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js" charset="utf-8"></script>
-    <script src="{% static 'Server/nv.d3.js' %}"/>
+    <link href="{% static 'Server/node_modules/nvd3/build/nv.d3.css' %}" rel="stylesheet">    
+    <script src="{% static 'Server/node_modules/d3/d3.js' %}"></script>
+    <script src="{% static 'Server/node_modules/nvd3/build/nv.d3.js' %}"></script>
+    
+    <script src="{% static 'Server/node_modules/jquery/dist/jquery.js' %}"></script>
 
-    <style>
-        text {
-            font: 12px sans-serif;
-        }
-        svg {
-            display: block;
-        }
-        html, body, svg {
-            margin: 0px;
-            padding: 0px;
-            height: 100%;
-            width: 100%;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'Server/node_modules/bootstrap/dist/css/bootstrap.min.css' %}">   
+    <script src="{% static 'Server/node_modules/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+
+
+    <link href="{% static 'Server/Theme/MainTheme.css' %}" rel="stylesheet">
 </head>
-<body class='with-3d-shadow with-transitions'>
-<button onclick="expandLegend();">Expand/Contract Legend</button>
-    <script>
-        var expandLegend = function() {
-            var exp = chart.legend.expanded();
-            chart.legend.expanded(!exp);
-            chart.update();
-        }
-    </script>
-<svg id="chart1" style="height: 900px;"></svg>
+<body>
+    <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="#">Home Environment Monitor</a>
+        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-toggle="collapse" data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <ul class="navbar-nav px-3">
+          <li class="nav-item text-nowrap">
+            <a class="nav-link" href="#">Sign out</a>
+          </li>
+        </ul>
+      </nav>
+      
+      <div class="container-fluid">
+        <div class="row">
+          <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+            <div class="sidebar-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                      <a class="nav-link active" href="#">
+                        <span data-feather="home"></span>
+                        Dashboard <span class="sr-only">(current)</span>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="#">
+                        <span data-feather="bar-chart-2"></span>
+                        Gamma Spectrometer
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="#">
+                        <span data-feather="sbar-chart-2"></span>
+                        Ionization Chamber
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="#">
+                        <span data-feather="bar-chart-2"></span>
+                        Semiconductor Detector
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="#">
+                        <span data-feather="bar-chart-2"></span>
+                        Geiger-Muller Counter
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="#">
+                        <span data-feather="bar-chart-2"></span>
+                        Weather Station
+                      </a>
+                    </li>
+                  </ul>
+      
+            </div>
+          </nav>
+      
+          <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+              <h1 class="h2">Dashboard</h1>
+              <div class="btn-toolbar mb-2 mb-md-0">
+                <div class="btn-group mr-2">
+                  <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+                  <span data-feather="calendar"></span>
+                  This week
+                </button>
+              </div>
+            </div>
+      
+            <svg id="chart1" style="height: 600px;"></svg>
+      
+      
+          </main>
+        </div>
+      </div>
+
+
+
+
+ <!--    <svg id='heatMap'></svg> -->
+    
 
 <script>
 
     var histcatexplong = [
         {
-            "key" : "Gamma Spectrometer" ,
-            "values" : [ 
-            {% for measurement in measurements %}
-                [{{ measurement.date }} , {{ measurement.value }}],
-            {% endfor %}
-            ]
+            "key" : "Geiger Counter" ,
+            "values" : [ [] ]
         } ,
-        {
-            "key" : "Ionization Chamber" ,
-            "values" : [ 
-            {% for measurement in measurements %}
-                [{{ measurement.date }} , {{ measurement.value }}],
-            {% endfor %}
-            ]
-        } ,
-        {
-            "key" : "Semiconductor Radioactivity Detector" ,
-            "values" : [ 
-            {% for measurement in measurements %}
-                [{{ measurement.date }} , {{ measurement.value }}],
-            {% endfor %}
-            ]
-        } ,
-        {
-            "key" : "Geiger-Muller Counter" ,
-            "values" : [ 
-            {% for measurement in measurements %}
-                [{{ measurement.date }} , {{ measurement.value }}],
-            {% endfor %}
-            ]
-        } ,       
+     
     ];
+
+
+    $.getJSON( "/GeigerCounter/data", function( data ) {
+        //var items = [];
+        var i=0
+        $.each( data, function( key, val ) {
+            histcatexplong[0].values.push([i,val.value])
+            i++// dummy way, I don't know how to parse date for now
+            //alert(val.value)
+        });
+    });
+
+
 
     var colors = d3.scale.category20();
 
@@ -105,6 +163,102 @@
     });
 
 
+
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////
+
+/*
+
+var chart = nv.models.heatMapChart();
+    var highContrast = true;
+    var showGrid = false;
+    var showAxes = true;
+	var defaultChart = {
+        x: function(d) { return d.hour },
+        y: function(d) { return d.day },
+        cellValue: function(d) { return d.value },
+        cellAspectRatio: false,
+        normalize: false,
+        colorRange: ["#a50026","#d73027","#f46d43","#fdae61","#fee090","#ffffbf","#e0f3f8","#abd9e9","#74add1","#4575b4","#313695"],
+        highContrastText: highContrast,
+        showXAxis: true,
+        showYAxis: true,
+        showLegend: true,
+        showGrid: showGrid,
+        showCellValues: true,
+        alignXAxis: 'top',
+        alignYAxis: 'left',
+        cellValueFormat: function(d) { return typeof d === 'number' ? d.toFixed(0) : d },
+        cellBorderWidth: 4,
+        cellRadius: 0,
+        missingDataColor: '#bcbcbc',
+        missingDataLabel: '',
+        xMeta: false,
+        yMeta: false,
+        metaOffset: 5,
+        margin: {top: 50, right: 50}
+	}
+
+
+	// setup default chart
+	nv.addGraph(function() {
+
+		setChartOptions(defaultChart);
+
+		d3.select('svg#heatMap')
+			.datum(datah)
+			.call(chart);
+
+		nv.utils.windowResize(chart.update);
+
+		return chart;
+	})
+
+	// update chart with new settings
+	function updatePlot(update) {
+		setChartOptions(update);
+		chart.update();
+	}
+
+	// set chart settings
+	function setChartOptions(update) {
+
+		Object.keys(update).forEach(function(optName, i) {
+			var optVal = Object.values(update)[i];
+            console.log('Setting the option ' + optName + ' to ' + optVal);
+			chart[optName](optVal)
+		});
+
+	}
+
+
+	var datah = [
+        {day: 'Tu', hour: 1, value: 6, group: 13, category: 1, level: 'F'},
+        {day: 'Tu', hour: 2, value: 2, group: 13, category: 1, level: 'J'},
+        {day: 'Tu', hour: 3, value: 0, group: 13, category: 1, level: 'F'},
+        {day: 'Tu', hour: 15, value: 60, group: 13, category: 2, level: 'A'},
+        {day: 'Tu', hour: 1, value: 50, group: 13, category: 2, level: 'C'},
+        {day: 'Tu', hour: 16, value: 50, group: 13, category: 2, level: 'C'},
+    ];
+    
+    $.getJSON( "/GeigerCounter/data", function( data ) {
+        var items = [];
+        var i=0
+        $.each( data, function( key, val ) {
+            datah[i%5].value = val.value
+            i++// dummy way, I don't know how to parse date for now
+        });
+    });
+
+    alert(1)*/
 </script>
+
 </body>
 </html>
