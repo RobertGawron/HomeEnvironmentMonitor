@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import include, path
 
 urlpatterns = [
-    path('GeigerCounter/', include('GeigerCounter.urls')),
+    path('', include('Sensor.urls')),
+    path('sensor/', include('Sensor.urls')),
     path('admin/', admin.site.urls),
 ]

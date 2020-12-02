@@ -31,7 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'GeigerCounter.apps.GeigercounterConfig',
+ #   'GeigerCounter.apps.GeigercounterConfig',
+    'Sensor.apps.SensorConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
