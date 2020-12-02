@@ -6,7 +6,7 @@
 
 **Note: this project is in very early state, also I'm not a web developer, so probably a lot of things are wrong. Any feedback is welcome :-)**
 
-This is a RaspberryPi based web sever for storage and visualization of data from various sensors, it was made to work dor below ones, but it should be easily extendable for new ones:
+This is a RaspberryPi based web sever for storage and visualization of data from various sensors, it was made to work for below ones, but it should be easily extendable for new ones:
 * [Gamma Spectrometer](https://github.com/RobertGawron/GammaSpectrometer)
 * [Ionization Chamber](https://github.com/RobertGawron/IonizationChamber)
 * [Semiconductor Radioactivity Detector](https://github.com/RobertGawron/SemiconductorRadioactivityDetector)

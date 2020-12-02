@@ -31,7 +31,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
- #   'GeigerCounter.apps.GeigercounterConfig',
     'Sensor.apps.SensorConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -124,5 +123,3 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / "static"
 ]
-
-print(BASE_DIR)

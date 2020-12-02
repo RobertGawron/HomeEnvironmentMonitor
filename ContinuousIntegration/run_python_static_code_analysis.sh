@@ -1,1 +1,1 @@
-flake8 --format=html --htmldir=python_lint_repport ../Server/Server ../EnviromentSensor
+flake8 --format=html --htmldir=python_lint_repport ../Server/Server ../Sensor/WeatherStation
