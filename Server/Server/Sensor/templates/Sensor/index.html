@@ -27,11 +27,11 @@
 
         <ul class="navbar-nav px-3">
           <li class="nav-item text-nowrap">
-            <a class="nav-link" href="#">Sign out</a>
+            <a class="nav-link" href="/admin">Admin</a>
           </li>
         </ul>
       </nav>
-      
+     
       <div class="container-fluid">
         <div class="row">
           <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
@@ -43,44 +43,22 @@
                         Dashboard <span class="sr-only">(current)</span>
                       </a>
                     </li>
+
+                    {% for sensor in sensors %}
                     <li class="nav-item">
-                      <a class="nav-link" href="#">
+                      <a class="nav-link" href="./{{ sensor.id }}">
                         <span data-feather="bar-chart-2"></span>
-                        Gamma Spectrometer
+                        {{ sensor.ShortName }}
                       </a>
                     </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="#">
-                        <span data-feather="sbar-chart-2"></span>
-                        Ionization Chamber
-                      </a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="#">
-                        <span data-feather="bar-chart-2"></span>
-                        Semiconductor Detector
-                      </a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="#">
-                        <span data-feather="bar-chart-2"></span>
-                        Geiger-Muller Counter
-                      </a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="#">
-                        <span data-feather="bar-chart-2"></span>
-                        Weather Station
-                      </a>
-                    </li>
-                  </ul>
-      
+                    {% endfor %}     
+
             </div>
           </nav>
       
           <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-              <h1 class="h2">Dashboard</h1>
+              <h1 class="h2">{% if not current_sensor %}Dashboard {% else %}Sensor id: {{current_sensor}}{% endif %}</h1>
               <div class="btn-toolbar mb-2 mb-md-0">
                 <div class="btn-group mr-2">
                   <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
@@ -102,9 +80,7 @@
 
 
 
-
- <!--    <svg id='heatMap'></svg> -->
-    
+  
 
 <script>
 
@@ -117,13 +93,13 @@
     ];
 
 
-    $.getJSON( "/GeigerCounter/data", function( data ) {
-        //var items = [];
+    // TODO find better way to pase sensor id
+    $.getJSON( "/sensor/{{ current_sensor }}/data", function( data ) {
+  
         var i=0
         $.each( data, function( key, val ) {
-            histcatexplong[0].values.push([i,val.value])
+            histcatexplong[0].values.push([i,val.Value])
             i++// dummy way, I don't know how to parse date for now
-            //alert(val.value)
         });
     });
 
@@ -163,101 +139,6 @@
     });
 
 
-
-
-
-
-
-
-
-
-
-//////////////////////////////////////////////
-
-/*
-
-var chart = nv.models.heatMapChart();
-    var highContrast = true;
-    var showGrid = false;
-    var showAxes = true;
-	var defaultChart = {
-        x: function(d) { return d.hour },
-        y: function(d) { return d.day },
-        cellValue: function(d) { return d.value },
-        cellAspectRatio: false,
-        normalize: false,
-        colorRange: ["#a50026","#d73027","#f46d43","#fdae61","#fee090","#ffffbf","#e0f3f8","#abd9e9","#74add1","#4575b4","#313695"],
-        highContrastText: highContrast,
-        showXAxis: true,
-        showYAxis: true,
-        showLegend: true,
-        showGrid: showGrid,
-        showCellValues: true,
-        alignXAxis: 'top',
-        alignYAxis: 'left',
-        cellValueFormat: function(d) { return typeof d === 'number' ? d.toFixed(0) : d },
-        cellBorderWidth: 4,
-        cellRadius: 0,
-        missingDataColor: '#bcbcbc',
-        missingDataLabel: '',
-        xMeta: false,
-        yMeta: false,
-        metaOffset: 5,
-        margin: {top: 50, right: 50}
-	}
-
-
-	// setup default chart
-	nv.addGraph(function() {
-
-		setChartOptions(defaultChart);
-
-		d3.select('svg#heatMap')
-			.datum(datah)
-			.call(chart);
-
-		nv.utils.windowResize(chart.update);
-
-		return chart;
-	})
-
-	// update chart with new settings
-	function updatePlot(update) {
-		setChartOptions(update);
-		chart.update();
-	}
-
-	// set chart settings
-	function setChartOptions(update) {
-
-		Object.keys(update).forEach(function(optName, i) {
-			var optVal = Object.values(update)[i];
-            console.log('Setting the option ' + optName + ' to ' + optVal);
-			chart[optName](optVal)
-		});
-
-	}
-
-
-	var datah = [
-        {day: 'Tu', hour: 1, value: 6, group: 13, category: 1, level: 'F'},
-        {day: 'Tu', hour: 2, value: 2, group: 13, category: 1, level: 'J'},
-        {day: 'Tu', hour: 3, value: 0, group: 13, category: 1, level: 'F'},
-        {day: 'Tu', hour: 15, value: 60, group: 13, category: 2, level: 'A'},
-        {day: 'Tu', hour: 1, value: 50, group: 13, category: 2, level: 'C'},
-        {day: 'Tu', hour: 16, value: 50, group: 13, category: 2, level: 'C'},
-    ];
-    
-    $.getJSON( "/GeigerCounter/data", function( data ) {
-        var items = [];
-        var i=0
-        $.each( data, function( key, val ) {
-            datah[i%5].value = val.value
-            i++// dummy way, I don't know how to parse date for now
-        });
-    });
-
-    alert(1)*/
 </script>
 
 </body>
