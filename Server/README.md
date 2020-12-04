@@ -14,9 +14,9 @@ In ./Server/Server/static/Server run:
 
 ```npm install```
 
-To start server, go to ./Server/Server directory and run: 
+To start server, in this directory run:
 
 ```
 source env/Scripts/activate
-python manage.py runserver
+python Server/manage.py runserver
 ```
