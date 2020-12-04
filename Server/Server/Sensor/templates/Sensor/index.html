@@ -6,17 +6,27 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link href="{% static 'Server/node_modules/nvd3/build/nv.d3.css' %}" rel="stylesheet">    
-    <script src="{% static 'Server/node_modules/d3/d3.js' %}"></script>
-    <script src="{% static 'Server/node_modules/nvd3/build/nv.d3.js' %}"></script>
-    
-    <script src="{% static 'Server/node_modules/jquery/dist/jquery.js' %}"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
 
-    <link rel="stylesheet" href="{% static 'Server/node_modules/bootstrap/dist/css/bootstrap.min.css' %}">   
-    <script src="{% static 'Server/node_modules/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'Server/javascript/node_modules/jquery/dist/jquery.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'Server/javascript/node_modules/bootstrap/dist/css/bootstrap.min.css' %}">   
+    <script src="{% static 'Server/javascript/node_modules/bootstrap/dist/js/bootstrap.min.js' %}"></script>
 
 
-    <link href="{% static 'Server/Theme/MainTheme.css' %}" rel="stylesheet">
+    <link href="{% static 'Server/css/MainTheme.css' %}" rel="stylesheet">
+
+
+    <style>
+      svg rect {
+          fill: orange;
+      }
+
+      svg text {
+           fill:black;
+          font: 10px sans-serif;
+          text-anchor: end;
+      }
+  </style>
 </head>
 <body>
     <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
@@ -31,7 +41,7 @@
           </li>
         </ul>
       </nav>
-     
+
       <div class="container-fluid">
         <div class="row">
           <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
@@ -51,11 +61,11 @@
                         {{ sensor.ShortName }}
                       </a>
                     </li>
-                    {% endfor %}     
+                    {% endfor %}
 
             </div>
           </nav>
-      
+
           <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
               <h1 class="h2">{% if not current_sensor %}Dashboard {% else %}Sensor id: {{current_sensor}}{% endif %}</h1>
@@ -70,76 +80,58 @@
                 </button>
               </div>
             </div>
-      
-            <svg id="chart1" style="height: 600px;"></svg>
-      
-      
+            <div id="chartBargraph" style="height: 600px;width:600px;"></div>
           </main>
         </div>
       </div>
 
-
-
-  
+    </body>
 
 <script>
 
-    var histcatexplong = [
-        {
-            "key" : "Geiger Counter" ,
-            "values" : [ [] ]
-        } ,
-     
-    ];
+  var barGraphData ={};
 
-
-    // TODO find better way to pase sensor id
-    $.getJSON( "/sensor/{{ current_sensor }}/data", function( data ) {
-  
-        var i=0
-        $.each( data, function( key, val ) {
-            histcatexplong[0].values.push([i,val.Value])
-            i++// dummy way, I don't know how to parse date for now
-        });
+  d3.json("/sensor/{{ current_sensor }}/data", function(data) {
+      data.forEach(function(d) {
+          d.Date =  d3.isoParse(d.Date);
+          barGraphData[d.Date]=d.Value
     });
+ 
+  console.log(barGraphData)
+
+  var width = 1600,
+  scaleFactor = 10,
+  barHeight = 20;
+
+  var graph = d3.select("#chartBargraph")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", barHeight * Object.keys(barGraphData).length);
 
 
+            var bar = graph.selectAll("g")
+                  .data(data)
+                  .enter()
+                  .append("g")
+                  .attr("transform", function(d, i) {
+                        return "translate(0," + i * barHeight + ")";
+                  });
 
-    var colors = d3.scale.category20();
+    bar.append("rect")
+       .attr("width", function(d) {
+                return d.Value * scaleFactor;
+       })
+       .attr("height", barHeight - 1);
 
-    var chart;
-    nv.addGraph(function() {
-        chart = nv.models.stackedAreaChart()
-            .useInteractiveGuideline(true)
-            .x(function(d) { return d[0] })
-            .y(function(d) { return d[1] })
-            .controlLabels({stacked: "Stacked"})
-            .duration(300);
+    bar.append("text")
+       .attr("x", function(d) { return (Object.keys(barGraphData).length*scaleFactor); })
+       .attr("y", barHeight / 2)
+       .attr("dy", ".35em")
+       .text(function(d) { return d.Date; });
 
-        chart.xAxis.tickFormat(function(d) { return d3.time.format('%x')(new Date(d)) });
-        chart.yAxis.tickFormat(d3.format(',.4f'));
-
-        chart.legend.vers('furious');
-
-        d3.select('#chart1')
-            .datum(histcatexplong)
-            .transition().duration(1000)
-            .call(chart)
-            .each('start', function() {
-                setTimeout(function() {
-                    d3.selectAll('#chart1 *').each(function() {
-                        if(this.__transition__)
-                            this.__transition__.duration = 1;
-                    })
-                }, 0)
-            });
-
-        nv.utils.windowResize(chart.update);
-        return chart;
-    });
-
-
+})
+ 
 </script>
 
-</body>
+
 </html>
