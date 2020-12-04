@@ -20,6 +20,7 @@ def sensor_details(request, sensor_id):
 
 
 def sensor_measurements(request, sensor_id):
-    measurements = Measurement.objects.filter(Sensor=sensor_id).order_by('Date').values()
+    measurements = Measurement.objects\
+        .filter(Sensor=sensor_id).order_by('Date').values()
 
     return JsonResponse(list(measurements), safe=False)

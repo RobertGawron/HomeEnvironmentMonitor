@@ -21,7 +21,9 @@ class Sensor(models.Model):
     ShortName = models.TextField('Short Name', max_length=40)
     Description = models.TextField('Description', max_length=100)
     CreationDate = models.DateTimeField('Creation Date')
-    State = models.CharField(max_length=1, choices=SensorState.choices, default=SensorState.ACTIVE)
+    State = models.CharField(max_length=1,
+                             choices=SensorState.choices,
+                             default=SensorState.ACTIVE)
 
     def __str__(self):
         return '{} : ({})'.format(self.ShortName, self.Description)
