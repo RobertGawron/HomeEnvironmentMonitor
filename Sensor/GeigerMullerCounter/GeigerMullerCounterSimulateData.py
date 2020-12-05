@@ -15,9 +15,8 @@ class GeigerMullerCounterSimulateData():
         date_list = [base - datetime.timedelta(minutes=m)
                      for m in range(number_of_generated_samples)]
 
-        for date in date_list:
+        for sample_timestamp in date_list:
             sample_value = random.randint(0, max_sample_value)
-            sample_timestamp = datetime.datetime.now()
             database_query.execute('insert into Sensor_measurement\
                 (Date, Value, Sensor_id)values (?, ?, ?);',
                                    (sample_timestamp, sample_value,
