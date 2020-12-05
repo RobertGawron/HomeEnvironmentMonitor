@@ -1,137 +1,187 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
+
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="https://d3js.org/d3.v4.min.js"></script>
 
-    <script src="{% static 'Server/javascript/node_modules/jquery/dist/jquery.js' %}"></script>
-    <link rel="stylesheet" href="{% static 'Server/javascript/node_modules/bootstrap/dist/css/bootstrap.min.css' %}">   
-    <script src="{% static 'Server/javascript/node_modules/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'Server/javascript/node_modules/jquery/dist/jquery.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'Server/javascript/node_modules/bootstrap/dist/css/bootstrap.min.css' %}">
+  <script src="{% static 'Server/javascript/node_modules/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+
+  <link href="{% static 'Server/css/MainTheme.css' %}" rel="stylesheet">
 
 
-    <link href="{% static 'Server/css/MainTheme.css' %}" rel="stylesheet">
+  <style>
+    #svg {
+      display: block;
+      margin: auto;
+    }
 
+    #chart {}
 
-    <style>
-      svg rect {
-          fill: orange;
-      }
+    .line {
+      fill: none;
+      stroke: rgb(255, 81, 0);
+      stroke-width: 1.5px;
+    }
 
-      svg text {
-           fill:black;
-          font: 10px sans-serif;
-          text-anchor: end;
-      }
+    .horizontalGrid {
+      fill: none;
+      shape-rendering: crispEdges;
+      stroke: rgb(185, 185, 185);
+      stroke-width: 1px;
+    }
+
+    .verticalLine {
+      fill: none;
+      shape-rendering: crispEdges;
+      stroke: rgb(82, 82, 82);
+      stroke-width: 1px;
+    }
   </style>
 </head>
-<body>
-    <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-        <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="#">Home Environment Monitor</a>
-        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-toggle="collapse" data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
 
-        <ul class="navbar-nav px-3">
-          <li class="nav-item text-nowrap">
-            <a class="nav-link" href="/admin">Admin</a>
-          </li>
-        </ul>
+<body>
+  </div>
+  <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+    <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="#">Home Environment Monitor</a>
+    <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-toggle="collapse"
+      data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <ul class="navbar-nav px-3">
+      <li class="nav-item text-nowrap">
+        <a class="nav-link" href="/admin">Admin</a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="container-fluid">
+    <div class="row">
+      <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+        <div class="sidebar-sticky pt-3">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link active" href="#">
+                <span data-feather="home"></span>
+                Dashboard <span class="sr-only">(current)</span>
+              </a>
+            </li>
+
+            {% for sensor in sensors %}
+            <li class="nav-item">
+              <a class="nav-link" href="./{{ sensor.id }}">
+                <span data-feather="bar-chart-2"></span>
+                {{ sensor.ShortName }}
+              </a>
+            </li>
+            {% endfor %}
+
+        </div>
       </nav>
 
-      <div class="container-fluid">
-        <div class="row">
-          <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
-            <div class="sidebar-sticky pt-3">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                      <a class="nav-link active" href="#">
-                        <span data-feather="home"></span>
-                        Dashboard <span class="sr-only">(current)</span>
-                      </a>
-                    </li>
-
-                    {% for sensor in sensors %}
-                    <li class="nav-item">
-                      <a class="nav-link" href="./{{ sensor.id }}">
-                        <span data-feather="bar-chart-2"></span>
-                        {{ sensor.ShortName }}
-                      </a>
-                    </li>
-                    {% endfor %}
-
+      <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+        <div
+          class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+          <h1 class="h2">{% if not current_sensor %}Dashboard {% else %}Sensor id: {{current_sensor}}{% endif %}</h1>
+          <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group mr-2">
+              <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+              <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
             </div>
-          </nav>
-
-          <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-              <h1 class="h2">{% if not current_sensor %}Dashboard {% else %}Sensor id: {{current_sensor}}{% endif %}</h1>
-              <div class="btn-toolbar mb-2 mb-md-0">
-                <div class="btn-group mr-2">
-                  <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
-                  <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
-                </div>
-                <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
-                  <span data-feather="calendar"></span>
-                  This week
-                </button>
-              </div>
-            </div>
-            <div id="chartBargraph" style="height: 600px;width:600px;"></div>
-          </main>
+            <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+              <span data-feather="calendar"></span>
+              This week
+            </button>
+          </div>
         </div>
-      </div>
+        <div id="container" class="container">
+          <div id="chart">
+          </div>
+      </main>
+    </div>
+  </div>
 
-    </body>
+</body>
 
 <script>
+  const margin = { top: 5, right: 5, bottom: 5, left: 5 },
+    width = document.getElementById("container").offsetWidth * 0.95 - margin.left - margin.right,
+    height = 800 - margin.top - margin.bottom;
 
-  var barGraphData ={};
+  const parseTime = d3.timeParse("%d/%m/%Y");
+  const dateFormat = d3.timeFormat("%d/%m/%Y");
 
-  d3.json("/sensor/{{ current_sensor }}/data", function(data) {
-      data.forEach(function(d) {
-          d.Date =  d3.isoParse(d.Date);
-          barGraphData[d.Date]=d.Value
+  const x = d3.scaleTime()
+    .range([0, width]);
+
+  const y = d3.scaleLinear()
+    .range([height, 0]);
+
+  const line = d3.line()
+    .x(d => x(d.date))
+    .y(d => y(d.measurement));
+
+  const svg = d3.select("#chart").append("svg")
+    .attr("id", "svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  var map = {};
+  i = 0
+  d3.json("/sensor/{{ current_sensor }}/data", function (data) {
+    data.forEach(function (d) {
+      d.date = d3.isoParse(d.Date);
+      d.measurement = +d.Value;
+
+      map[d.date] = d
+      //      console.log(d)
     });
- 
-  console.log(barGraphData)
 
-  var width = 1600,
-  scaleFactor = 10,
-  barHeight = 20;
+    x.domain(d3.extent(data, d => d.date));
+    y.domain(d3.extent(data, d => d.measurement));
 
-  var graph = d3.select("#chartBargraph")
-            .append("svg")
-            .attr("width", width)
-            .attr("height", barHeight * Object.keys(barGraphData).length);
+    svg.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+
+    svg.append("g")
+      .call(d3.axisLeft(y))
+      .append("text")
+      .attr("fill", "#000")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", "0.71em")
+      .style("text-anchor", "end")
+      .text("Pts");
+
+    svg.selectAll("y axis").data(y.ticks(10)).enter()
+      .append("line")
+      .attr("class", "horizontalGrid")
+      .attr("x1", 0)
+      .attr("x2", width)
+      .attr("y1", d => y(d))
+      .attr("y2", d => y(d));
+
+    svg.append("path")
+      .datum(data)
+      .attr("class", "line")
+      .attr("d", line);
+  });
 
 
-            var bar = graph.selectAll("g")
-                  .data(data)
-                  .enter()
-                  .append("g")
-                  .attr("transform", function(d, i) {
-                        return "translate(0," + i * barHeight + ")";
-                  });
 
-    bar.append("rect")
-       .attr("width", function(d) {
-                return d.Value * scaleFactor;
-       })
-       .attr("height", barHeight - 1);
-
-    bar.append("text")
-       .attr("x", function(d) { return (Object.keys(barGraphData).length*scaleFactor); })
-       .attr("y", barHeight / 2)
-       .attr("dy", ".35em")
-       .text(function(d) { return d.Date; });
-
-})
- 
 </script>
+
+
 
 
 </html>
